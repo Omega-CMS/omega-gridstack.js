@@ -1,20 +1,20 @@
 {
-  "name": "gridstack",
-  "version": "2.0.1-dev",
+  "name": "omega-gridstack",
+  "version": "2.0.3",
   "description": "TypeScript/Javascript lib for dashboard layout and creation, no external dependencies, with many wrappers (React, Angular, Ember, knockout...)",
   "main": "./dist/gridstack.js",
   "types": "./dist/gridstack.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gridstack/gridstack.js.git"
+    "url": "git+https://github.com/Omega-CMS/omega-gridstack.js.git"
   },
   "scripts": {
-    "build": "yarn --no-progress && rm -rf dist/* && grunt && webpack && tsc --stripInternal && doctoc ./README.md && doctoc ./doc/README.md && doctoc ./doc/CHANGES.md",
-    "w": "rm -rf dist/* && grunt && webpack",
-    "t": "rm -rf dist/* && grunt && tsc --stripInternal",
+    "build": "yarn --no-progress && rmdir /Q /S dist && grunt && webpack && tsc --stripInternal && doctoc ./README.md && doctoc ./doc/README.md && doctoc ./doc/CHANGES.md",
+    "w": "rmdir /Q /S dist && grunt && webpack",
+    "t": "rmdir /Q /S dist && grunt && tsc --stripInternal",
     "test": "yarn lint && karma start karma.conf.js",
     "lint": "tsc --noEmit && eslint src/*.ts",
-    "reset": "rm -rf dist node_modules",
+    "reset": "rmdir /Q /S dist node_modules",
     "prepublishOnly": "yarn build"
   },
   "keywords": [
@@ -32,16 +32,17 @@
     "React",
     "JavaScript"
   ],
-  "author": "Pavel Reznikov <pashka.reznikov@gmail.com>",
+  "author": "Omega IT LLC",
   "contributors": [
     "Dylan Weiss <dylan.weiss@gmail.com> (https://dylandreams.com)",
-    "Alain Dumesny <alaind831+github@gmail.com> (https://github.com/adumesny)"
+    "Alain Dumesny <alaind831+github@gmail.com> (https://github.com/adumesny)",
+    "Pavel Reznikov <pashka.reznikov@gmail.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gridstack/gridstack.js/issues"
+    "url": "https://github.com/Omega-CMS/omega-gridstack.js/issues"
   },
-  "homepage": "http://gridstack.github.io/gridstack.js/",
+  "homepage": "https://github.com/Omega-CMS/omega-gridstack.js/",
   "dependencies": {
   },
   "devDependencies": {
