@@ -1617,7 +1617,7 @@ export class GridStack {
         // see if we already have a node with widget/height and check for attributes
         let node = el.gridstackNode || {};
         if (node !== undefined) {
-          if (!node.width || !node.height) {
+          if (el.getAttribute !== undefined && (!node.width || !node.height)) {
             let w = parseInt(el.getAttribute('data-gs-width'));
             if (w > 0) { node.width = w; }
             let h = parseInt(el.getAttribute('data-gs-height'));
