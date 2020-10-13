@@ -1675,44 +1675,46 @@ export class GridStack {
         }
 
         let node = el.gridstackNode; // use existing placeholder node as it's already in our list with drop location
-        const _id = node._id;
-        this.engine.cleanupNode(node); // removes all internal _xyz values (including the _id so add that back)
-        node._id = _id;
-        node.grid = this;
-        this.dd.off(el, 'drag');
-        // if we made a copy ('helper' which is temp) of the original node then insert a copy, else we move the original node (#1102)
-        // as the helper will be nuked by jqueryui otherwise
-        if (helper !== el) {
-          helper.remove();
-          el.gridstackNode = origNode; // original item (left behind) is re-stored to pre dragging as the node now has drop info
-          el = el.cloneNode(true) as GridItemHTMLElement;
-        } else {
-          el.remove(); // reduce flicker as we change depth here, and size further down
-          this.dd
-            .draggable(el, 'destroy')
-            .resizable(el, 'destroy');
+        if (node !== undefined) {
+          const _id = node._id;
+          this.engine.cleanupNode(node); // removes all internal _xyz values (including the _id so add that back)
+          node._id = _id;
+          node.grid = this;
+          this.dd.off(el, 'drag');
+          // if we made a copy ('helper' which is temp) of the original node then insert a copy, else we move the original node (#1102)
+          // as the helper will be nuked by jqueryui otherwise
+          if (helper !== el) {
+            helper.remove();
+            el.gridstackNode = origNode; // original item (left behind) is re-stored to pre dragging as the node now has drop info
+            el = el.cloneNode(true) as GridItemHTMLElement;
+          } else {
+            el.remove(); // reduce flicker as we change depth here, and size further down
+            this.dd
+              .draggable(el, 'destroy')
+              .resizable(el, 'destroy');
+          }
+          el.gridstackNode = node;
+          node.el = el;
+
+          Utils.removePositioningStyles(el);
+          this._writeAttr(el, node);
+          this.el.appendChild(el);
+          this._updateContainerHeight();
+          this.engine.addedNodes.push(node);
+          this._triggerAddEvent();
+          this._triggerChangeEvent();
+
+          this.engine.endUpdate();
+          if (this._gsEventHandler['dropped']) {
+            this._gsEventHandler['dropped']({ type: 'dropped' }, origNode && origNode.grid ? origNode : undefined, node);
+          }
+
+          // wait till we return out of the drag callback to set the new drag&resize handler or they may get messed up
+          // IFF we are still there (some application will use as placeholder and insert their real widget instead)
+          window.setTimeout(() => {
+            if (node.el && node.el.parentElement) this._prepareDragDropByNode(node);
+          });
         }
-        el.gridstackNode = node;
-        node.el = el;
-
-        Utils.removePositioningStyles(el);
-        this._writeAttr(el, node);
-        this.el.appendChild(el);
-        this._updateContainerHeight();
-        this.engine.addedNodes.push(node);
-        this._triggerAddEvent();
-        this._triggerChangeEvent();
-
-        this.engine.endUpdate();
-        if (this._gsEventHandler['dropped']) {
-          this._gsEventHandler['dropped']({ type: 'dropped' }, origNode && origNode.grid ? origNode : undefined, node);
-        }
-
-        // wait till we return out of the drag callback to set the new drag&resize handler or they may get messed up
-        // IFF we are still there (some application will use as placeholder and insert their real widget instead)
-        window.setTimeout(() => {
-          if (node.el && node.el.parentElement) this._prepareDragDropByNode(node);
-        });
 
         return false; // prevent parent from receiving msg (which may be grid as well)
       });
@@ -1723,7 +1725,7 @@ export class GridStack {
   private static getElement(els: GridStackElement = '.grid-stack-item'): GridItemHTMLElement {
     if (typeof els === 'string') {
       let el = document.querySelector(els);
-      if (!el && els[0] !== '.' && els[0] !== '#') {
+      if (!el && els[0] !== '.' && els[0] !== '#' && els[0] !== '[') {
         el = document.querySelector('#' + els);
         if (!el) { el = document.querySelector('.' + els) }
       }
@@ -1736,7 +1738,7 @@ export class GridStack {
   private static getElements(els: GridStackElement = '.grid-stack-item'): GridItemHTMLElement[] {
     if (typeof els === 'string') {
       let list = document.querySelectorAll(els);
-      if (!list.length && els[0] !== '.' && els[0] !== '#') {
+      if (!list.length && els[0] !== '.' && els[0] !== '#' && els[0] !== '[') {
         list = document.querySelectorAll('.' + els);
         if (!list.length) { list = document.querySelectorAll('#' + els) }
       }
